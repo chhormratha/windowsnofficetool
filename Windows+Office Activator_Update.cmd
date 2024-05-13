@@ -1,6 +1,8 @@
-@set masver=2.6 - by CHHORM RATHA
+@set masver=2.5
+@set my_name= - By CHHORM RATHA
 @setlocal DisableDelayedExpansion
 @echo off
+
 
 ::========================================================================================================================================
 
@@ -75,7 +77,7 @@ popd
 
 cls
 color 07
-title  Windows and Office Activator %masver%
+title  Windows and Office Tool - By CHHORM RATHA
 
 set _args=
 set _elev=
@@ -187,6 +189,35 @@ exit /b
 
 ::========================================================================================================================================
 
+::  Check for updates
+
+set -=
+set old=
+
+for /f "delims=[] tokens=2" %%# in ('ping -4 -n 1 updatecheck.mass%-%grave.dev') do (
+if not [%%#]==[] (echo "%%#" | find "127.69" %nul1% && (echo "%%#" | find "127.69.%masver%" %nul1% || set old=1))
+)
+
+if defined old (
+echo ________________________________________________
+%eline%
+echo You are running outdated version MAS %masver%
+echo ________________________________________________
+echo:
+if not defined _MASunattended (
+echo [1] Get Latest MAS
+echo [0] Continue Anyway
+echo:
+call :_color %_Green% "Enter a menu option in the Keyboard [1,0] :"
+choice /C:10 /N
+if !errorlevel!==2 rem
+if !errorlevel!==1 (start ht%-%tps://github.com/mass%-%gravel/Microsoft-Acti%-%vation-Scripts & start %mas% & exit /b)
+)
+)
+cls
+
+::========================================================================================================================================
+
 ::  Run script with parameters in unattended mode
 
 set _elev=
@@ -195,7 +226,7 @@ if defined _args echo "%_args%" | find /i "/" %nul% && (
 echo "%_args%" | find /i "/HWID"   %nul% && (setlocal & cls & (call :HWIDActivation   %_args% %_silent%) & endlocal)
 echo "%_args%" | find /i "/KMS38"  %nul% && (setlocal & cls & (call :KMS38Activation  %_args% %_silent%) & endlocal)
 echo "%_args%" | find /i "/KMS-"   %nul% && (setlocal & cls & (call :KMSActivation    %_args% %_silent%) & endlocal)
-echo "%_args%" | find /i "/Ohook"  %nul% && (setlocal & cls & (call :OhookActivation  %_args% %_silent%) & endlocal)
+echo "%_args%" | find /i "/Permanently"  %nul% && (setlocal & cls & (call :PermanentlyActivation  %_args% %_silent%) & endlocal)
 exit /b
 )
 
@@ -217,35 +248,31 @@ setlocal EnableDelayedExpansion
 
 cls
 color 07
-title  Windows and Office Activator %masver%
+title  Windows and Office Tool - By CHHORM RATHA
 mode 76, 30
 
 echo:
 echo:
-echo:
+echo:                 Windows and Office Activation Tool
 echo:
 echo:       ______________________________________________________________
 echo:
 echo:                 Activation Methods:
 echo:
-echo:             [1] Windows - Activate Windows Permanent
-echo:             [2] Office  - Acitvate Office Permanent
-echo:
-echo:             [3] Activation Status
-echo:             [4] Troubleshoot
-echo:             [5] Extras
+echo:             [1] Activate Windows Permanent
+echo:             [2] Activate Office Permanent
+echo:             [3] Activate Status
 echo:             [0] Exit
+echo:
 echo:       ______________________________________________________________
 echo:
-call :_color2 %_White% "          " %_Green% "Enter a menu option in the Keyboard [1,2,3,4,5,0] :"
-choice /C:123450 /N
+call :_color2 %_White% "          " %_Green% "Enter a menu option in the Keyboard [1,2,3,0] :"
+choice /C:1230 /N
 set _erl=%errorlevel%
 
-if %_erl%==6 exit /b
-if %_erl%==5 goto:Extras
-if %_erl%==4 setlocal & call :troubleshoot      & cls & endlocal & goto :MainMenu
+if %_erl%==4 exit /b
 if %_erl%==3 setlocal & call :_Check_Status_wmi & cls & endlocal & goto :MainMenu
-if %_erl%==2 setlocal & call :OhookActivation   & cls & endlocal & goto :MainMenu
+if %_erl%==2 setlocal & call :PermanentlyActivation   & cls & endlocal & goto :MainMenu
 if %_erl%==1 setlocal & call :HWIDActivation    & cls & endlocal & goto :MainMenu
 goto :MainMenu
 
@@ -265,19 +292,138 @@ echo:       ______________________________________________________________
 echo:
 echo:             [1] Change Windows Edition
 echo:
-echo:             [2] Activation Status [vbs]   
-echo:                                                     
+echo:             [2] Extract $OEM$ Folder
+echo:
+echo:             [3] Activation Status [vbs]
+echo:
+echo:             [4] Download Genuine Windows / Office
+echo:             __________________________________________________      
+echo:                                                                     
 echo:             [0] Go to Main Menu
 echo:       ______________________________________________________________
 echo:
-call :_color2 %_White% "           " %_Green% "Enter a menu option in the Keyboard [1,2,0] :"
-choice /C:120 /N
+call :_color2 %_White% "           " %_Green% "Enter a menu option in the Keyboard [1,2,3,4,0] :"
+choice /C:12340 /N
 set _erl=%errorlevel%
 
-if %_erl%==3 goto :MainMenu
-if %_erl%==2 setlocal & call :_Check_Status_vbs & cls & endlocal & goto :Extras
+if %_erl%==5 goto :MainMenu
+if %_erl%==4 start %mas%genuine-installation-media.html & goto :Extras
+if %_erl%==3 setlocal & call :_Check_Status_vbs & cls & endlocal & goto :Extras
+if %_erl%==2 goto:Extract$OEM$
 if %_erl%==1 setlocal & call :change_edition    & cls & endlocal & goto :Extras
 goto :Extras
+
+::========================================================================================================================================
+
+:Extract$OEM$
+
+cls
+title  Extract $OEM$ Folder
+mode 76, 30
+
+if not exist "!_desktop_!\" (
+%eline%
+echo Desktop location was not detected, aborting...
+echo _____________________________________________________
+echo:
+call :_color %_Yellow% "Press any key to go back..."
+pause >nul
+goto Extras
+)
+
+if exist "!_desktop_!\$OEM$\" (
+%eline%
+echo $OEM$ folder already exists on the Desktop.
+echo _____________________________________________________
+echo:
+call :_color %_Yellow% "Press any key to go back..."
+pause >nul
+goto Extras
+)
+
+:Extract$OEM$2
+
+cls
+title  Extract $OEM$ Folder
+mode 78, 30
+echo:
+echo:
+echo:
+echo:
+echo:                     Extract $OEM$ folder on the desktop           
+echo:           ________________________________________________________
+echo:
+echo:              [1] HWID
+echo:              [2] Permanently
+echo:              [3] KMS38
+echo:              [4] Online KMS
+echo:
+echo:              [5] HWID       ^(Windows^) ^+ Permanently      ^(Office^)
+echo:              [6] HWID       ^(Windows^) ^+ Online KMS ^(Office^)
+echo:              [7] KMS38      ^(Windows^) ^+ Permanently      ^(Office^)
+echo:              [8] KMS38      ^(Windows^) ^+ Online KMS ^(Office^)
+echo:              [9] Online KMS ^(Windows^) ^+ Permanently      ^(Office^)
+echo:
+call :_color2 %_White% "              [R] " %_Green% "ReadMe"
+echo:              [0] Go Back
+echo:           ________________________________________________________
+echo:  
+call :_color2 %_White% "           " %_Green% "Enter a menu option in the Keyboard:"
+choice /C:123456789R0 /N
+set _erl=%errorlevel%
+
+if %_erl%==11 goto:Extras
+if %_erl%==10 start %mas%oem-folder.html &goto:Extract$OEM$2
+if %_erl%==9 (set "_oem=Online KMS [Windows] + Permanently [Office]" & set "para=/KMS-ActAndRenewalTask /KMS-Windows /Permanently" &goto:Extract$OEM$3)
+if %_erl%==8 (set "_oem=KMS38 [Windows] + Online KMS [Office]" & set "para=/KMS38 /KMS-ActAndRenewalTask /KMS-Office" &goto:Extract$OEM$3)
+if %_erl%==7 (set "_oem=KMS38 [Windows] + Permanently [Office]" & set "para=/KMS38 /Permanently" &goto:Extract$OEM$3)
+if %_erl%==6 (set "_oem=HWID [Windows] + Online KMS [Office]" & set "para=/HWID /KMS-ActAndRenewalTask /KMS-Office" &goto:Extract$OEM$3)
+if %_erl%==5 (set "_oem=HWID [Windows] + Permanently [Office]" & set "para=/HWID /Permanently" &goto:Extract$OEM$3)
+if %_erl%==4 (set "_oem=Online KMS" & set "para=/KMS-ActAndRenewalTask /KMS-WindowsOffice" &goto:Extract$OEM$3)
+if %_erl%==3 (set "_oem=KMS38" & set "para=/KMS38" &goto:Extract$OEM$3)
+if %_erl%==2 (set "_oem=Permanently" & set "para=/Permanently" &goto:Extract$OEM$3)
+if %_erl%==1 (set "_oem=HWID" & set "para=/HWID" &goto:Extract$OEM$3)
+goto :Extract$OEM$2
+
+::========================================================================================================================================
+
+:Extract$OEM$3
+
+cls
+set "_dir=!_desktop_!\$OEM$\$$\Setup\Scripts"
+md "!_dir!\"
+copy /y /b "!_batf!" "!_dir!\MAS_AIO.cmd" %nul%
+
+(
+echo @echo off
+echo fltmc ^>nul ^|^| exit /b
+echo call "%%~dp0MAS_AIO.cmd" %para%
+echo cd \
+echo ^(goto^) 2^>nul ^& ^(if "%%~dp0"=="%%SystemRoot%%\Setup\Scripts\" rd /s /q "%%~dp0"^)
+)>"!_dir!\SetupComplete.cmd"
+
+set _error=
+if not exist "!_dir!\MAS_AIO.cmd" set _error=1
+if not exist "!_dir!\SetupComplete.cmd" set _error=1
+
+if defined _error (
+%eline%
+echo Failed to extract $OEM$ folder on the Desktop.
+) else (
+echo:
+call :_color %Blue% "%_oem%"
+call :_color %Green% "$OEM$ folder is successfully created on the Desktop."
+)
+echo "%_oem%" | find /i "KMS38" 1>nul && (
+echo:
+echo To KMS38 activate Server Cor/Acor editions ^(No GUI Versions^),
+echo Check this page %mas%oem-folder
+)
+echo ___________________________________________________________________
+echo:
+call :_color %_Yellow% "Press any key to go back..."
+pause >nul
+goto Extras
 
 :+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -297,7 +443,7 @@ set _NoEditionChange=0
 
 cls
 color 07
-title  Windows Permanently Activation %masver%
+title  Permanently Windows Activation - By CHHORM RATHA
 
 set _args=
 set _elev=
@@ -397,7 +543,7 @@ setlocal EnableDelayedExpansion
 cls
 mode 110, 34
 if exist "%Systemdrive%\Windows\System32\spp\store_test\" mode 134, 34
-title  HWID Activation %masver%
+title  Permanently Windows Activation - By CHHORM RATHA 
 
 echo:
 echo Initializing...
@@ -829,13 +975,15 @@ call :dk_color2 %Blue% "Check this page for help" %_Yellow% " %mas%troubleshoot"
 ::========================================================================================================================================
 
 :dl_final
-
+cls
 echo:
 
 if defined regionchange (
 %psc% "Set-WinHomeLocation -GeoId %nation%" %nul%
 if !errorlevel! EQU 0 (
-echo Restoring Windows Region                [Successful]
+echo     Windows Activate Successfully...!
+echo     Restoring Windows Region                [Successful]
+echo     Done 
 ) else (
 call :dk_color %Red% "Restoring Windows Region                [Failed] [%name% - %nation%]"
 )
@@ -1214,7 +1362,7 @@ set error=1
 
 reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform\Plugins\Objects\msft:rm/algorithm/hwid/4.0" /f ba02fed39662 /d %nul% || (
 call :dk_color %Red% "Checking SPP Registry Key               [Incorrect ModuleId Found]"
-call :dk_color2 %Blue% "Possibly Caused By Gaming Spoofers." %_Yellow% " Help - %mas%issues_due_to_gaming_spoofers"
+call :dk_color %Blue% "Possibly Caused By Gaming Spoofers. Help: %mas%troubleshoot"
 set error=1
 set showfix=1
 )
@@ -1486,14 +1634,14 @@ exit /b
 
 :+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-:OhookActivation
+:PermanentlyActivation
 @setlocal DisableDelayedExpansion
 @echo off
 
-::  To activate Office with Ohook activation, run the script with "/Ohook" parameter or change 0 to 1 in below line
+::  To activate Office with PermanPermanently Activation, run the script with "/Permanently" parameter or change 0 to 1 in below line
 set _act=0
 
-::  To remove Ohook activation, run the script with /Ohook-Uninstall parameter or change 0 to 1 in below line
+::  To remove PermanPermanently Activation, run the script with /Permanently-Uninstall parameter or change 0 to 1 in below line
 set _rem=0
 
 ::  If value is changed in above lines or parameter is used then script will run in unattended mode
@@ -1502,7 +1650,7 @@ set _rem=0
 
 cls
 color 07
-title  Ohook Activation %masver%
+title  Permanently Office Activation - By CHHORM RATHA
 
 set _args=
 set _elev=
@@ -1512,8 +1660,8 @@ set _args=%*
 if defined _args set _args=%_args:"=%
 if defined _args (
 for %%A in (%_args%) do (
-if /i "%%A"=="/Ohook"                  set _act=1
-if /i "%%A"=="/Ohook-Uninstall"        set _rem=1
+if /i "%%A"=="/Permanently"                  set _act=1
+if /i "%%A"=="/Permanently-Uninstall"        set _rem=1
 if /i "%%A"=="-el"                     set _elev=1
 )
 )
@@ -1569,7 +1717,7 @@ set "_fixmsg=In MAS folder, run Troubleshoot script and select Fix Licensing opt
 if %winbuild% LSS 9200 (
 %eline%
 echo Unsupported OS version detected [%winbuild%].
-echo Ohook Activation is supported on Windows 8 and later and their server equivalent.
+echo PermanPermanently Activation is supported on Windows 8 and later and their server equivalent.
 goto dk_done
 )
 
@@ -1598,7 +1746,7 @@ if %_rem%==1 goto :oh_uninstall
 if %_unattended%==0 (
 cls
 mode 76, 25
-title  Office Activation %masver%
+title  Permanently Office Activation %my_name%
 
 echo:
 echo:
@@ -1606,17 +1754,21 @@ echo:
 echo:
 echo         ____________________________________________________________
 echo:
-echo                 [1] Activate Office Permanently
+echo                 [1] Install Permanently Office Activation
 echo:
-echo                 [2] Uninstall Office License
+echo                 [2] Uninstall
+echo                 ____________________________________________
+echo:
+echo                 [3] Download Office
 echo:
 echo                 [0] %_exitmsg%
 echo         ____________________________________________________________
 echo: 
-call :dk_color2 %_White% "              " %_Green% "Enter a menu option in the Keyboard [1,2,0]"
-choice /C:120 /N
+call :dk_color2 %_White% "              " %_Green% "Enter a menu option in the Keyboard [1,2,3,0]"
+choice /C:1230 /N
 set _el=!errorlevel!
 if !_el!==4  exit /b
+if !_el!==3  start %mas%genuine-installation-media.html &goto :oh_menu
 if !_el!==2  goto :oh_uninstall
 if !_el!==1  goto :oh_menu2
 goto :oh_menu
@@ -1630,7 +1782,7 @@ cls
 mode 130, 32
 %psc% "&{$W=$Host.UI.RawUI.WindowSize;$B=$Host.UI.RawUI.BufferSize;$W.Height=32;$B.Height=300;$Host.UI.RawUI.WindowSize=$W;$Host.UI.RawUI.BufferSize=$B;}"
 
-title  Office Permanently Activation %masver%
+title  Permanently Office Activation %my_name%
 
 echo:
 echo Initializing...
@@ -1970,11 +2122,11 @@ if !errorlevel! NEQ 0 cscript //nologo %windir%\system32\slmgr.vbs /rilc %nul%
 )
 
 ::========================================================================================================================================
-
+cls
 echo:
 if not defined error (
-call :dk_color %Green% "Office is permanently activated."
-echo Help: %mas%troubleshoot
+call :dk_color %Green% "    Office is permanently activated."
+echo     Done 
 ) else (
 call :dk_color %Red% "Some errors were detected."
 if not defined ierror if not defined showfix if not defined serv_cor if not defined serv_cste call :dk_color %Blue% "%_fixmsg%"
@@ -1990,7 +2142,7 @@ goto :dk_done
 
 cls
 mode 99, 28
-title  Uninstall Office License %masver%
+title  Uninstall Permanently Office Activation %my_name%
 
 set _present=
 set _unerror=
@@ -1998,7 +2150,7 @@ call :oh_reset
 call :oh_getpath
 
 echo:
-echo Uninstalling Ohook Activation...
+echo Uninstalling PermanPermanently Activation...
 echo:
 
 if defined o16c2r_reg (for /f "skip=2 tokens=2*" %%a in ('"reg query %o16c2r_reg% /v InstallPath" %nul6%') do (set "_16CHook=%%b\root\vfs"))
@@ -2050,16 +2202,17 @@ reg delete "HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Softwa
 )
 
 echo __________________________________________________________________________________________
+cls
 echo:
 
 if not defined _present (
-echo Ohook Activation is not installed.
+echo PermanPermanently Activation is not installed.
 ) else (
 if defined _unerror (
-call :dk_color %Red% "Failed to uninstall Ohook activation."
+call :dk_color %Red% "Failed to uninstall PermanPermanently Activation."
 call :dk_color %Blue% "Close Office apps if they are running and try again."
 ) else (
-call :dk_color %Green% "Successfully uninstalled Ohook activation."
+call :dk_color %Green% "     Successfully uninstalled PermanPermanently Activation."
 )
 )
 echo __________________________________________________________________________________________
@@ -2250,7 +2403,7 @@ if exist "!_oLPath!\ProPlus2024PreviewVL_*.xrm-ms" if not exist "!_oLPath!\ProPl
 )
 set _prod=%%#!_preview!
 
-call :ohookdata getinfo !_prod!
+call :Permanentlydata getinfo !_prod!
 
 if not [!_key!]==[] (
 echo "!oapplist!" | find /i "!_actid!" %nul1% || call :oh_installlic
@@ -2276,7 +2429,7 @@ if %oVer%==16 set _psmsikey=%o16msi_reg:HKLM\=HKLM:%
 if exist %msitemp% del /f /q %msitemp%
 %psc% "$Key = '%_psmsikey%\Registration\{*FF1CE}'; $keydata = Get-ItemProperty -Path $Key -Name "DigitalProductID"; $binaryData = $keydata."DigitalProductID"; $stringData = [System.Text.Encoding]::Unicode.GetString($binaryData);$stringData" >>%msitemp%
 
-if exist %msitemp% call :ohookdata getmsiprod
+if exist %msitemp% call :Permanentlydata getmsiprod
 if exist %msitemp% del /f /q %msitemp%
 
 exit /b
@@ -2344,7 +2497,7 @@ exit /b
 ::  5th column = Edition
 ::  Separator  = "_"
 
-:ohookdata
+:Permanentlydata
 
 set f=
 for %%# in (
@@ -2511,30 +2664,6 @@ for %%# in (
 16_8fdb1f1e-663f-4f2e-8fdb-7c35aee7d5ea_GN%f%XWX-DF%f%797-B2J%f%T3-82%f%W27-KHP%f%XT_MAK-AE________ProPlus2024Volume-Preview
 16_33b11b14-91fd-4f7b-b704-e64a055cf601_X8%f%6XX-N3%f%QMW-B4W%f%GQ-QC%f%B69-V26%f%KW_MAK-AE________ProjectPro2024Volume-Preview
 16_eb074198-7384-4bdd-8e6c-c3342dac8435_DW%f%99Y-H7%f%NT6-6B2%f%9D-8J%f%Q8F-R3Q%f%T7_MAK-AE________VisioPro2024Volume-Preview
-16_e563d108-7b0e-418a-8390-20e1d133d6bb_P6%f%NMW-JM%f%TRC-R6M%f%Q6-HH%f%3F2-BTH%f%KB_Retail________Access2024Retail
-16_f748e2f7-5951-4bc2-8a06-5a1fbe42f5f4_CX%f%NJT-98%f%HPP-92H%f%X7-MX%f%6GY-2PV%f%FR_MAK-AE________Access2024Volume
-16_f3a5e86a-e4f8-4d88-8220-1440c3bbcefa_82%f%CNJ-W8%f%2TW-BY2%f%3W-BV%f%J6W-W48%f%GP_Retail________Excel2024Retail
-16_523fbbab-c290-460d-a6c9-48e49709cb8e_7Y%f%287-9N%f%2KC-8MR%f%R3-BK%f%Y82-2DQ%f%RV_MAK-AE________Excel2024Volume
-16_885f83e0-5e18-4199-b8be-56697d0debfb_N6%f%9X7-73%f%KPT-899%f%FD-P8%f%HQ4-QGT%f%P4_Retail________Home2024Retail
-16_acd4eccb-ff89-4e6a-9350-d2d56276ec69_PR%f%KQM-YN%f%PQR-77Q%f%T6-32%f%8D7-BD2%f%23_Retail________HomeBusiness2024Retail
-16_6f5fd645-7119-44a4-91b4-eccfeeb738bf_2C%f%FK4-N4%f%4KG-7XG%f%89-CW%f%DG6-P7P%f%27_Retail________Outlook2024Retail
-16_9a1e1bac-2d8b-4890-832f-0a68b27c16e0_NQ%f%PXP-WV%f%B87-H3M%f%MB-FY%f%BW2-9QF%f%PB_MAK-AE________Outlook2024Volume
-16_da9a57ae-81a8-4cb3-b764-5840e6b5d0bf_CT%f%2KT-GT%f%NWH-9HF%f%GW-J2%f%PWJ-XW7%f%KJ_Retail________PowerPoint2024Retail
-16_eca0d8a6-e21b-4622-9a87-a7103ff14012_RR%f%XFN-JJ%f%26R-RVW%f%D2-V7%f%WMP-27P%f%WQ_MAK-AE________PowerPoint2024Volume
-16_295dcc21-151a-4b4d-8f50-2b627ea197f6_GN%f%J6P-Y4%f%RBM-C32%f%WW-2V%f%JKJ-MTH%f%KK_Retail________ProjectPro2024Retail
-16_2141d341-41aa-4e45-9ca1-201e117d6495_WN%f%FMR-HK%f%4R7-7FJ%f%VM-VQ%f%3JC-76H%f%F6_MAK-AE1_______ProjectPro2024Volume
-16_ead42f74-817d-45b4-af6b-3beeb36ba650_C2%f%PNM-2G%f%QFC-CY3%f%XR-WX%f%CP4-GX3%f%XM_Retail________ProjectStd2024Retail
-16_4b6d9b9b-c16e-429d-babe-8bb84c3c27d6_F2%f%VNW-MW%f%8TT-K62%f%2Q-4D%f%96H-PWJ%f%8X_MAK-AE________ProjectStd2024Volume
-16_db249714-bb54-4422-8c78-2cc8d4c4a19f_VW%f%CNX-7F%f%KBD-FHJ%f%YG-XB%f%R4B-88K%f%C6_Retail________ProPlus2024Retail
-16_d77244dc-2b82-4f0a-b8ae-1fca00b7f3e2_4Y%f%V2J-VN%f%G7W-YGT%f%P3-44%f%3TK-TF8%f%CP_MAK-AE1_______ProPlus2024Volume
-16_3046a03e-2277-4a51-8ccd-a6609eae8c19_XK%f%RBW-KN%f%2FF-G8C%f%KY-HX%f%VG6-FVY%f%2V_MAK-AE________SkypeforBusiness2024Volume
-16_44a07f51-8263-4b2f-b2a5-70340055c646_GV%f%G6N-6W%f%CHH-K2M%f%VP-RQ%f%78V-3J7%f%GJ_MAK-AE1_______Standard2024Volume
-16_282d8f34-1111-4a6f-80fe-c17f70dec567_HG%f%RBX-N6%f%8QF-6DY%f%8J-CG%f%X4W-XW7%f%KP_Retail________VisioPro2024Retail
-16_4c2f32bf-9d0b-4d8c-8ab1-b4c6a0b9992d_GB%f%NHB-B2%f%G3Q-G42%f%YB-3M%f%FC2-7CJ%f%CX_MAK-AE________VisioPro2024Volume
-16_8504167d-887a-41ae-bd1d-f849d834352d_VB%f%XPJ-38%f%NR3-C4D%f%KF-C8%f%RT7-RGH%f%KQ_Retail________VisioStd2024Retail
-16_0978336b-5611-497c-9414-96effaff4938_YN%f%FTY-63%f%K7P-FKH%f%XK-28%f%YYT-D32%f%XB_MAK-AE________VisioStd2024Volume
-16_f6b24e61-6aa7-4fd2-ab9b-4046cee4230a_XN%f%33R-RP%f%676-GMY%f%2F-T3%f%MH7-GCV%f%KR_Retail________Word2024Retail
-16_06142aa2-e935-49ca-af5d-08069a3d84f3_WD%f%8CQ-6K%f%NQM-8W2%f%CX-2R%f%T63-KK3%f%TP_MAK-AE________Word2024Volume
 16_6337137e-7c07-4197-8986-bece6a76fc33_2P%f%3C9-BQ%f%NJH-VCV%f%PH-YD%f%Y6M-43J%f%PQ_Subscription__O365BusinessRetail
 16_2f5c71b4-5b7a-4005-bb68-f9fac26f2ea3_W6%f%2NQ-26%f%7QR-RTF%f%74-PF%f%2MH-JQM%f%TH_Subscription__O365EduCloudRetail
 16_537ea5b5-7d50-4876-bd38-a53a77caca32_J2%f%W28-TN%f%9C8-26P%f%WV-F7%f%J4G-72X%f%CB_Subscription1_O365HomePremRetail
@@ -2654,7 +2783,7 @@ $MemoryStream.Close()
 ::
 ::  The files are encoded in base64 to make MAS AIO version.
 ::
-::  mass grave[.]dev/ohook
+::  mass grave[.]dev/Permanently
 ::  Here you can find the files source code and info on how to rebuild the identical sppc.dll files
 ::
 ::  stackoverflow.com/a/35335273
@@ -7027,10 +7156,7 @@ echo     C:\Program Files\Activation-Renewal\Info.txt
 echo     C:\Program Files\Activation-Renewal\Logs.txt
 echo ______________________________________________________________________________________________
 echo:
-echo   Online KMS Activation Script is a part of 'Windows and Office Activator' [MAS] project.
-echo:   
-echo   Homepage: mass grave[.]dev
-echo      Email: windowsaddict@protonmail.com
+
 )>"%_dest%\Info.txt"
 exit /b
 
@@ -7170,17 +7296,6 @@ exit /b
 
 :_extracttask:
 @echo off
-
-::   Renew K-M-S activation with Online servers via scheduled task
-
-::============================================================================
-::
-::   This script is a part of 'Windows and Office Activator' (MAS) project.
-::
-::   Homepage: mass grave[.]dev
-::      Email: windowsaddict@protonmail.com
-::
-::============================================================================
 
 
 if not "%~1"=="Task" (
@@ -7786,17 +7901,17 @@ set "SysPath=%SystemRoot%\Sysnative"
 set "Path=%SystemRoot%\Sysnative;%SystemRoot%\Sysnative\Wbem;%SystemRoot%\Sysnative\WindowsPowerShell\v1.0\;%Path%"
 )
 
-set ohook=
+set Permanently=
 for %%# in (15 16) do (
 for %%A in ("%ProgramFiles%" "%ProgramW6432%" "%ProgramFiles(x86)%") do (
-if exist "%%~A\Microsoft Office\Office%%#\sppc*dll" set ohook=1
+if exist "%%~A\Microsoft Office\Office%%#\sppc*dll" set Permanently=1
 )
 )
 
 for %%# in (System SystemX86) do (
 for %%G in ("Office 15" "Office") do (
 for %%A in ("%ProgramFiles%" "%ProgramW6432%" "%ProgramFiles(x86)%") do (
-if exist "%%~A\Microsoft %%~G\root\vfs\%%#\sppc*dll" set ohook=1
+if exist "%%~A\Microsoft %%~G\root\vfs\%%#\sppc*dll" set Permanently=1
 )
 )
 )
@@ -7829,14 +7944,14 @@ del /f /q slmgr.vbs >nul 2>&1
 popd
 echo %line3%
 
-if defined ohook (
+if defined Permanently (
 echo.
 echo.
 echo %line2%
-echo ***            Office Ohook Activation Status            ***
+echo ***            Office PermanPermanently Activation Status            ***
 echo %line2%
 echo.
-powershell "write-host -back 'Black' -fore 'Yellow' 'Ohook for permanent Office activation is installed.'; write-host -back 'Black' -fore 'Yellow' 'You can ignore below Office activation status.'"
+powershell "write-host -back 'Black' -fore 'Yellow' 'Permanently for permanent Office activation is installed.'; write-host -back 'Black' -fore 'Yellow' 'You can ignore below Office activation status.'"
 echo.
 )
 
@@ -8040,17 +8155,17 @@ set "SysPath=%SystemRoot%\Sysnative"
 set "Path=%SystemRoot%\Sysnative;%SystemRoot%\Sysnative\Wbem;%SystemRoot%\Sysnative\WindowsPowerShell\v1.0\;%Path%"
 )
 
-set ohook=
+set Permanently=
 for %%# in (15 16) do (
 for %%A in ("%ProgramFiles%" "%ProgramW6432%" "%ProgramFiles(x86)%") do (
-if exist "%%~A\Microsoft Office\Office%%#\sppc*dll" set ohook=1
+if exist "%%~A\Microsoft Office\Office%%#\sppc*dll" set Permanently=1
 )
 )
 
 for %%# in (System SystemX86) do (
 for %%G in ("Office 15" "Office") do (
 for %%A in ("%ProgramFiles%" "%ProgramW6432%" "%ProgramFiles(x86)%") do (
-if exist "%%~A\Microsoft %%~G\root\vfs\%%#\sppc*dll" set ohook=1
+if exist "%%~A\Microsoft %%~G\root\vfs\%%#\sppc*dll" set Permanently=1
 )
 )
 )
@@ -8132,14 +8247,14 @@ for /f "tokens=2 delims==" %%# in ('%_qr%') do (
   echo.
 )
 
-if defined ohook (
+if defined Permanently (
 echo.
 echo.
 echo %line2%
-echo ***            Office Ohook Activation Status            ***
+echo ***            Office PermanPermanently Activation Status            ***
 echo %line2%
 echo.
-powershell "write-host -back 'Black' -fore 'Yellow' 'Ohook for permanent Office activation is installed.'; write-host -back 'Black' -fore 'Yellow' 'You can ignore below Office activation status.'"
+powershell "write-host -back 'Black' -fore 'Yellow' 'Permanently for permanent Office activation is installed.'; write-host -back 'Black' -fore 'Yellow' 'You can ignore below Office activation status.'"
 echo.
 )
 
@@ -8609,20 +8724,33 @@ echo:
 echo:
 echo:
 echo:
-echo:       _______________________________________________________________ 
+echo:       _______________________________________________________________
+echo:                                                   
+call :_color2 %_White% "             [1] " %_Green% "Help"
+echo:             ___________________________________________________
 echo:                                                                      
-echo:             [1] Fix WMI
-echo:             [2] Fix Licensing
+echo:             [2] Dism RestoreHealth
+echo:             [3] SFC Scannow
+echo:                                                                      
+echo:             [4] Fix WMI
+echo:             [5] Fix Licensing
+echo:             [6] Fix WPA Registry
+echo:             ___________________________________________________
+echo:
 echo:             [0] %_exitmsg%
 echo:       _______________________________________________________________
 echo:          
 call :_color2 %_White% "            " %_Green% "Enter a menu option in the Keyboard :"
-choice /C:120 /N
+choice /C:1234560 /N
 set _erl=%errorlevel%
 
-if %_erl%==3 exit /b
-if %_erl%==2 goto:retokens
-if %_erl%==1 goto:fixwmi
+if %_erl%==7 exit /b
+if %_erl%==6 start %mas%fix-wpa-registry.html &goto at_menu
+if %_erl%==5 goto:retokens
+if %_erl%==4 goto:fixwmi
+if %_erl%==3 goto:sfcscan
+if %_erl%==2 goto:dism_rest
+if %_erl%==1 start %mas%troubleshoot.html &goto at_menu
 goto :at_menu
 
 ::========================================================================================================================================
@@ -9945,7 +10073,8 @@ echo:
 %psc% "$f=[io.file]::ReadAllText('!_batp!') -split ':dismapi\:.*';& ([ScriptBlock]::Create($f[1])) %targetedition% %key%;"
 timeout /t 3 %nul1%
 echo:
-call :dk_color2 %Blue% "Check this page for help" %_Yellow% " %mas%change_edition_issues"
+call :dk_color %Blue% "Incase of errors, you must restart your system before trying again."
+echo Check this page for help. %mas%troubleshoot
 )
 %line%
 
@@ -9959,13 +10088,13 @@ cls
 mode con cols=105 lines=32
 %psc% "&{$W=$Host.UI.RawUI.WindowSize;$B=$Host.UI.RawUI.BufferSize;$W.Height=31;$B.Height=200;$Host.UI.RawUI.WindowSize=$W;$Host.UI.RawUI.BufferSize=$B;}"
 
-REM %psc% "$f=[io.file]::ReadAllText('!_batp!') -split ':checkrebootflag\:.*';iex ($f[1]);" | find /i "True" %nul% && (
-REM %eline%
-REM echo Pending reboot flags found.
-REM echo:
-REM echo Restart the system and try again.
-REM goto ced_done
-REM )
+%psc% "$f=[io.file]::ReadAllText('!_batp!') -split ':checkrebootflag\:.*';iex ($f[1]);" | find /i "True" %nul% && (
+%eline%
+echo Pending reboot flags found.
+echo:
+echo Restart the system and try again.
+goto ced_done
+)
 
 echo:
 if defined dismnotworking call :dk_color %_Yellow% "Note - DISM.exe is not responding."
